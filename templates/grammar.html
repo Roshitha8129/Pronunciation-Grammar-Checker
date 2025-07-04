@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block title %}Grammar Checker - Pronunciation Detector{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h1 class="display-6 fw-bold mb-2">
+                        <i class="fas fa-spell-check text-primary me-2"></i>Grammar & Spell Checker
+                    </h1>
+                    <p class="text-muted mb-0">Check your text for grammar mistakes and spelling errors using advanced NLP</p>
+                </div>
+                <div>
+                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#helpModal">
+                        <i class="fas fa-question-circle me-1"></i>Help
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="row">
+        <!-- Input Section -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>Your Text
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="grammarForm">
+                        <div class="mb-3">
+                            <textarea 
+                                class="form-control" 
+                                id="inputText" 
+                                rows="12" 
+                                placeholder="Type or paste your text here to check for grammar and spelling mistakes..."
+                                maxlength="5000"
+                            ></textarea>
+                            <div class="form-text d-flex justify-content-between">
+                                <span>Maximum 5000 characters</span>
+                                <span id="charCount">0 / 5000</span>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button type="submit" class="btn btn-primary" id="checkBtn">
+                                <i class="fas fa-search me-2"></i>Check Grammar
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" id="clearBtn">
+                                <i class="fas fa-trash me-2"></i>Clear
+                            </button>
+                            <button type="button" class="btn btn-outline-info" id="sampleBtn">
+                                <i class="fas fa-file-text me-2"></i>Load Sample
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Results Section -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-check-circle me-2"></i>Results
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="resultsContainer">
+                        <div class="text-center text-muted py-5" id="initialMessage">
+                            <i class="fas fa-clipboard-check fa-3x mb-3 opacity-50"></i>
+                            <p class="mb-0">Enter text and click "Check Grammar" to see results</p>
+                        </div>
+
+                        <!-- Highlighted Text Section -->
+                        <div id="highlightedTextSection" style="display: none;">
+                            <h6 class="mb-3">
+                                <i class="fas fa-highlighter me-2 text-warning"></i>Text with Highlighted Errors
+                            </h6>
+                            <div id="highlightedText" class="border rounded p-3 mb-4 bg-light" style="line-height: 1.8;"></div>
+                        </div>
+
+                        <!-- Corrected Text Section -->
+                        <div id="correctedTextSection" style="display: none;">
+                            <h6 class="mb-3">
+                                <i class="fas fa-check-circle me-2 text-success"></i>Corrected Text
+                            </h6>
+                            <div id="correctedText" class="border rounded p-3 mb-4 bg-success bg-opacity-10" style="line-height: 1.8;"></div>
+                            <div class="d-flex gap-2 mb-4">
+                                <button class="btn btn-outline-primary btn-sm" id="copyOriginalBtn">
+                                    <i class="fas fa-copy me-1"></i>Copy Original
+                                </button>
+                                <button class="btn btn-primary btn-sm" id="copyCorrectedBtn">
+                                    <i class="fas fa-copy me-1"></i>Copy Corrected
+                                </button>
+                                <button class="btn btn-outline-success btn-sm" id="acceptCorrectionsBtn">
+                                    <i class="fas fa-check me-1"></i>Accept All Corrections
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Error Details Section -->
+                        <div id="errorDetailsSection" style="display: none;">
+                            <h6 class="mb-3">
+                                <i class="fas fa-exclamation-triangle me-2 text-danger"></i>Error Details
+                            </h6>
+                            <div id="errorDetails"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Statistics -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Text Statistics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center" id="statsContainer">
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="stat-item">
+                                <h4 class="text-primary mb-1" id="wordCount">0</h4>
+                                <p class="text-muted mb-0 small">Words</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="stat-item">
+                                <h4 class="text-info mb-1" id="sentenceCount">0</h4>
+                                <p class="text-muted mb-0 small">Sentences</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="stat-item">
+                                <h4 class="text-warning mb-1" id="errorCount">0</h4>
+                                <p class="text-muted mb-0 small">Errors Found</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="stat-item">
+                                <h4 class="text-success mb-1" id="scorePercent">100%</h4>
+                                <p class="text-muted mb-0 small">Accuracy</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Help Modal -->
+<div class="modal fade" id="helpModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-question-circle me-2"></i>How to Use Grammar Checker
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-edit text-primary me-2"></i>Getting Started</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">• Type or paste your text in the input area</li>
+                            <li class="mb-2">• Click "Check Grammar" to analyze</li>
+                            <li class="mb-2">• Review suggestions and corrections</li>
+                            <li class="mb-2">• Apply fixes by clicking on them</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-lightbulb text-warning me-2"></i>Tips</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">• Use "Load Sample" for practice text</li>
+                            <li class="mb-2">• Check statistics for text analysis</li>
+                            <li class="mb-2">• Maximum 5000 characters per check</li>
+                            <li class="mb-2">• Works best with complete sentences</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <h6><i class="fas fa-cogs text-info me-2"></i>What We Check</h6>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="text-center p-2">
+                            <i class="fas fa-spell-check fa-2x text-primary mb-2"></i>
+                            <p class="small mb-0"><strong>Spelling</strong><br>Typos and misspellings</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center p-2">
+                            <i class="fas fa-language fa-2x text-success mb-2"></i>
+                            <p class="small mb-0"><strong>Grammar</strong><br>Sentence structure</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center p-2">
+                            <i class="fas fa-pen-fancy fa-2x text-warning mb-2"></i>
+                            <p class="small mb-0"><strong>Style</strong><br>Writing improvements</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Got it!</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/grammar.js') }}"></script>
+{% endblock %}

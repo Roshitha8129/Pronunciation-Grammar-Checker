@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+
+{% block title %}Pronunciation Practice - Pronunciation Detector{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h1 class="display-6 fw-bold mb-2">
+                        <i class="fas fa-microphone text-success me-2"></i>Pronunciation Practice
+                    </h1>
+                    <p class="text-muted mb-0">Practice reading aloud and get detailed feedback on your pronunciation</p>
+                </div>
+                <div>
+                    <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#instructionsModal">
+                        <i class="fas fa-info-circle me-1"></i>Instructions
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Practice Text Selection -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-book me-2"></i>Select Practice Text
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="textCategory" class="form-label">Category</label>
+                            <select class="form-select" id="textCategory">
+                                <option value="beginner">Beginner Level</option>
+                                <option value="intermediate">Intermediate Level</option>
+                                <option value="advanced">Advanced Level</option>
+                                <option value="custom">Custom Text</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="textType" class="form-label">Text Type</label>
+                            <select class="form-select" id="textType">
+                                <option value="sentences">Short Sentences</option>
+                                <option value="paragraph">Paragraph</option>
+                                <option value="story">Short Story</option>
+                                <option value="tongue-twister">Tongue Twisters</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-info" id="loadTextBtn">
+                        <i class="fas fa-refresh me-2"></i>Load New Text
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Practice Area -->
+    <div class="row">
+        <!-- Text to Read -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-eye me-2"></i>Text to Read
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="practiceText" class="practice-text p-3 border rounded bg-light">
+                        <p class="lead">Click "Load New Text" to get started with your pronunciation practice.</p>
+                    </div>
+                    
+                    <!-- Custom Text Input -->
+                    <div id="customTextArea" class="mt-3" style="display: none;">
+                        <textarea 
+                            class="form-control" 
+                            id="customText" 
+                            rows="4" 
+                            placeholder="Enter your own text to practice..."
+                            maxlength="1000"
+                        ></textarea>
+                        <div class="form-text">Maximum 1000 characters</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recording Controls -->
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-microphone me-2"></i>Recording & Analysis
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <!-- Recording Status -->
+                    <div id="recordingStatus" class="mb-4">
+                        <div class="recording-indicator mb-3">
+                            <i class="fas fa-microphone fa-4x text-muted" id="micIcon"></i>
+                        </div>
+                        <p class="text-muted mb-0" id="statusText">Ready to record</p>
+                    </div>
+                    
+                    <!-- Controls -->
+                    <div class="d-flex justify-content-center gap-3 mb-4">
+                        <button class="btn btn-success btn-lg" id="startRecordBtn">
+                            <i class="fas fa-play me-2"></i>Start Recording
+                        </button>
+                        <button class="btn btn-danger btn-lg" id="stopRecordBtn" disabled>
+                            <i class="fas fa-stop me-2"></i>Stop Recording
+                        </button>
+                        <button class="btn btn-info btn-lg" id="playbackBtn" disabled>
+                            <i class="fas fa-volume-up me-2"></i>Playback
+                        </button>
+                    </div>
+                    
+                    <!-- Recording Timer -->
+                    <div id="recordingTimer" class="mb-3" style="display: none;">
+                        <h4 class="text-danger mb-0">
+                            <i class="fas fa-clock me-2"></i>
+                            <span id="timerDisplay">00:00</span>
+                        </h4>
+                    </div>
+                    
+                    <!-- Analysis Button -->
+                    <button class="btn btn-warning btn-lg" id="analyzeBtn" disabled>
+                        <i class="fas fa-chart-line me-2"></i>Analyze Pronunciation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Results Section -->
+    <div class="row" id="resultsSection" style="display: none;">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Pronunciation Analysis Results
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Score Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-4 mb-3">
+                            <div class="score-card text-center p-3 border rounded">
+                                <h3 class="text-primary mb-2" id="pronunciationScore">0%</h3>
+                                <p class="mb-0">Pronunciation Accuracy</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="score-card text-center p-3 border rounded">
+                                <h3 class="text-success mb-2" id="fluencyScore">0%</h3>
+                                <p class="mb-0">Fluency Score</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="score-card text-center p-3 border rounded">
+                                <h3 class="text-info mb-2" id="completenessScore">0%</h3>
+                                <p class="mb-0">Completeness</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Detailed Feedback -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-eye me-2"></i>Expected Text</h6>
+                            <div class="p-3 bg-light border rounded mb-3" id="expectedText">
+                                <!-- Expected text will be displayed here -->
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-microphone me-2"></i>What You Said</h6>
+                            <div class="p-3 bg-light border rounded mb-3" id="recognizedText">
+                                <!-- Recognized text will be displayed here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Feedback and Suggestions -->
+                    <div class="mt-4">
+                        <h6><i class="fas fa-lightbulb me-2"></i>Feedback & Suggestions</h6>
+                        <div id="feedbackContainer" class="p-3 bg-info bg-opacity-10 border rounded">
+                            <!-- Feedback will be displayed here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="text-center mt-4">
+                        <button class="btn btn-primary me-2" id="tryAgainBtn">
+                            <i class="fas fa-redo me-2"></i>Try Again
+                        </button>
+                        <button class="btn btn-success me-2" id="nextTextBtn">
+                            <i class="fas fa-forward me-2"></i>Next Text
+                        </button>
+                        <button class="btn btn-info" id="saveResultBtn">
+                            <i class="fas fa-save me-2"></i>Save Result
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Instructions Modal -->
+<div class="modal fade" id="instructionsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-info-circle me-2"></i>How to Practice Pronunciation
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-list-ol text-primary me-2"></i>Steps to Follow</h6>
+                        <ol>
+                            <li class="mb-2">Select text category and type</li>
+                            <li class="mb-2">Click "Load New Text" to get practice text</li>
+                            <li class="mb-2">Read the text silently first</li>
+                            <li class="mb-2">Click "Start Recording" and read aloud</li>
+                            <li class="mb-2">Click "Stop Recording" when finished</li>
+                            <li class="mb-2">Click "Analyze Pronunciation" for feedback</li>
+                        </ol>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-tips text-success me-2"></i>Tips for Better Results</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">• Speak clearly and at normal pace</li>
+                            <li class="mb-2">• Use a quiet environment</li>
+                            <li class="mb-2">• Position microphone properly</li>
+                            <li class="mb-2">• Read complete sentences</li>
+                            <li class="mb-2">• Practice regularly for improvement</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <h6><i class="fas fa-chart-bar text-warning me-2"></i>Understanding Your Scores</h6>
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <div class="p-2">
+                            <i class="fas fa-bullseye fa-2x text-primary mb-2"></i>
+                            <p class="small mb-0"><strong>Pronunciation</strong><br>Word accuracy</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="p-2">
+                            <i class="fas fa-tachometer-alt fa-2x text-success mb-2"></i>
+                            <p class="small mb-0"><strong>Fluency</strong><br>Speaking rhythm</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="p-2">
+                            <i class="fas fa-check-circle fa-2x text-info mb-2"></i>
+                            <p class="small mb-0"><strong>Completeness</strong><br>Text coverage</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Start Practicing!</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/practice.js') }}"></script>
+{% endblock %}

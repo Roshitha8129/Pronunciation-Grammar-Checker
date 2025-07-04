@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Pronunciation Detector{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h2 class="mb-0">
+                        <i class="fas fa-sign-in-alt me-2"></i>Welcome Back
+                    </h2>
+                    <p class="mb-0 mt-2">Sign in to continue your learning journey</p>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form method="POST" id="loginForm">
+                        {{ form.hidden_tag() }}
+                        
+                        <!-- Username/Email -->
+                        <div class="mb-3">
+                            <label for="username" class="form-label">
+                                <i class="fas fa-user me-1"></i>Username or Email
+                            </label>
+                            {{ form.username(class="form-control form-control-lg", placeholder="Enter username or email") }}
+                            {% if form.username.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.username.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Password -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-1"></i>Password
+                            </label>
+                            <div class="input-group">
+                                {{ form.password(class="form-control form-control-lg", placeholder="Enter your password", id="password") }}
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="fas fa-eye" id="toggleIcon"></i>
+                                </button>
+                            </div>
+                            {% if form.password.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.password.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Remember Me -->
+                        <div class="mb-3 form-check">
+                            {{ form.remember(class="form-check-input") }}
+                            <label class="form-check-label" for="remember">
+                                Remember me on this device
+                            </label>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="d-grid mb-3">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                        
+                        <!-- Forgot Password -->
+                        <div class="text-center">
+                            <a href="#" class="text-muted small">
+                                <i class="fas fa-question-circle me-1"></i>Forgot your password?
+                            </a>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="card-footer text-center py-3">
+                    <p class="mb-0">
+                        Don't have an account? 
+                        <a href="{{ url_for('register') }}" class="text-primary fw-bold">Create Account</a>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Demo Account Info -->
+            <div class="card mt-3 border-info">
+                <div class="card-body text-center">
+                    <h6 class="card-title text-info">
+                        <i class="fas fa-info-circle me-1"></i>Demo Account
+                    </h6>
+                    <p class="card-text small mb-2">
+                        Try the app with demo credentials:
+                    </p>
+                    <p class="small mb-0">
+                        <strong>Username:</strong> demo<br>
+                        <strong>Password:</strong> demo123
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Toggle password visibility
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const password = document.getElementById('password');
+        const toggleIcon = document.getElementById('toggleIcon');
+        
+        if (password.type === 'password') {
+            password.type = 'text';
+            toggleIcon.classList.remove('fa-eye');
+            toggleIcon.classList.add('fa-eye-slash');
+        } else {
+            password.type = 'password';
+            toggleIcon.classList.remove('fa-eye-slash');
+            toggleIcon.classList.add('fa-eye');
+        }
+    });
+    
+    // Auto-focus on username field
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelector('input[name="username"]').focus();
+    });
+</script>
+{% endblock %}

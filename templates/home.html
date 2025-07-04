@@ -1,0 +1,476 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Pronunciation Detector{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="welcome-card bg-gradient-primary text-white p-4 rounded-3">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="display-6 fw-bold mb-2">
+                            Welcome back, {{ current_user.full_name.split()[0] if current_user.full_name else current_user.username }}! 👋
+                        </h1>
+                        <p class="lead mb-0">Ready to improve your language skills today?</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <i class="fas fa-graduation-cap fa-4x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card bg-success text-white p-3 rounded-3 text-center">
+                <i class="fas fa-check-circle fa-2x mb-2"></i>
+                <h4 class="mb-1">{{ user_stats.grammar_checks or 0 }}</h4>
+                <p class="mb-0 small">Grammar Checks</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card bg-info text-white p-3 rounded-3 text-center">
+                <i class="fas fa-microphone fa-2x mb-2"></i>
+                <h4 class="mb-1">{{ user_stats.practice_sessions or 0 }}</h4>
+                <p class="mb-0 small">Practice Sessions</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card bg-warning text-white p-3 rounded-3 text-center">
+                <i class="fas fa-star fa-2x mb-2"></i>
+                <h4 class="mb-1">{{ user_stats.avg_score or 0 }}%</h4>
+                <p class="mb-0 small">Average Score</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="stat-card bg-danger text-white p-3 rounded-3 text-center">
+                <i class="fas fa-fire fa-2x mb-2"></i>
+                <h4 class="mb-1">{{ user_stats.streak_days or 0 }}</h4>
+                <p class="mb-0 small">Day Streak</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Features -->
+    <div class="row g-4 mb-4">
+        <!-- Grammar Checker -->
+        <div class="col-lg-6">
+            <div class="feature-card h-100 p-4 border rounded-3 shadow-sm">
+                <div class="text-center mb-3">
+                    <div class="feature-icon bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="fas fa-spell-check fa-2x"></i>
+                    </div>
+                </div>
+                <h3 class="text-center mb-3">Grammar & Spell Checker</h3>
+                <p class="text-muted text-center mb-4">
+                    Check your text for grammar mistakes, spelling errors, and get suggestions for improvement using advanced NLP.
+                </p>
+                <div class="text-center">
+                    <a href="{{ url_for('grammar') }}" class="btn btn-primary btn-lg px-4">
+                        <i class="fas fa-edit me-2"></i>Start Checking
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pronunciation Practice -->
+        <div class="col-lg-6">
+            <div class="feature-card h-100 p-4 border rounded-3 shadow-sm">
+                <div class="text-center mb-3">
+                    <div class="feature-icon bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <i class="fas fa-microphone fa-2x"></i>
+                    </div>
+                </div>
+                <h3 class="text-center mb-3">Pronunciation Practice</h3>
+                <p class="text-muted text-center mb-4">
+                    Practice reading aloud and get detailed feedback on your pronunciation, fluency, and accuracy.
+                </p>
+                <div class="text-center">
+                    <a href="{{ url_for('practice') }}" class="btn btn-success btn-lg px-4">
+                        <i class="fas fa-play me-2"></i>Start Practice
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Secondary Features -->
+    <div class="row g-4">
+        <!-- Profile Management -->
+        <div class="col-md-6">
+            <div class="feature-card h-100 p-4 border rounded-3 shadow-sm">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="feature-icon bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+                        <i class="fas fa-user fa-lg"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-1">Profile & Settings</h4>
+                        <p class="text-muted mb-0">Manage your account and preferences</p>
+                    </div>
+                </div>
+                <a href="{{ url_for('profile') }}" class="btn btn-info">
+                    <i class="fas fa-cog me-2"></i>Manage Profile
+                </a>
+            </div>
+        </div>
+        
+        <!-- Voice Assistant -->
+        <div class="col-md-6">
+            <div class="feature-card h-100 p-4 border rounded-3 shadow-sm">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="feature-icon bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+                        <i class="fas fa-robot fa-lg"></i>
+                    </div>
+                    <div>
+                        <h4 class="mb-1">Voice Assistant</h4>
+                        <p class="text-muted mb-0">Navigate using voice commands</p>
+                    </div>
+                </div>
+                <button class="btn btn-warning" id="voiceAssistantBtn">
+                    <i class="fas fa-microphone-alt me-2"></i>Activate Assistant
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Progress Charts -->
+    <div class="row mt-5">
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>Progress Over Time
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="progressChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>Activity Breakdown
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="activityChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Learning Insights -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>Your Learning Insights
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="insight-card text-center p-3 bg-light rounded">
+                                <i class="fas fa-trophy fa-2x text-warning mb-2"></i>
+                                <h6>Best Performance</h6>
+                                <p class="mb-0 text-muted">{{ user_stats.best_score or 'N/A' }}% accuracy</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="insight-card text-center p-3 bg-light rounded">
+                                <i class="fas fa-calendar-check fa-2x text-success mb-2"></i>
+                                <h6>Most Active Day</h6>
+                                <p class="mb-0 text-muted">{{ user_stats.most_active_day or 'No data yet' }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="insight-card text-center p-3 bg-light rounded">
+                                <i class="fas fa-target fa-2x text-info mb-2"></i>
+                                <h6>Improvement Rate</h6>
+                                <p class="mb-0 text-muted">{{ user_stats.improvement_rate or '+0' }}% this week</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    {% if recent_activities %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <h3 class="mb-3">
+                <i class="fas fa-history me-2"></i>Recent Activity
+            </h3>
+            <div class="card">
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        {% for activity in recent_activities %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center border-0">
+                            <div class="d-flex align-items-center">
+                                <div class="activity-icon me-3">
+                                    <i class="fas fa-{{ activity.icon }} fa-lg text-{{ activity.color }}"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">{{ activity.description }}</div>
+                                    <small class="text-muted">{{ activity.details or 'Practice session completed' }}</small>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted">{{ activity.timestamp }}</small>
+                                {% if activity.score %}
+                                <div class="badge bg-{{ activity.color }} ms-2">{{ activity.score }}%</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if recent_activities|length == 0 %}
+                    <div class="text-center py-4 text-muted">
+                        <i class="fas fa-clock fa-3x mb-3 opacity-50"></i>
+                        <p class="mb-0">No recent activity. Start practicing to see your progress here!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-info">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-rocket fa-4x text-info mb-3"></i>
+                    <h4>Ready to Start Your Learning Journey?</h4>
+                    <p class="text-muted mb-4">Begin with grammar checking or pronunciation practice to see your progress here.</p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="{{ url_for('grammar') }}" class="btn btn-primary">
+                            <i class="fas fa-spell-check me-2"></i>Start Grammar Check
+                        </a>
+                        <a href="{{ url_for('practice') }}" class="btn btn-success">
+                            <i class="fas fa-microphone me-2"></i>Start Practice
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Initialize charts when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeProgressChart();
+        initializeActivityChart();
+        initializeVoiceAssistant();
+    });
+
+    // Progress Chart
+    function initializeProgressChart() {
+        const ctx = document.getElementById('progressChart').getContext('2d');
+
+        // Sample data - in production, this would come from the backend
+        const progressData = {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+            datasets: [{
+                label: 'Grammar Score',
+                data: [65, 72, 78, 82, 85, 88],
+                borderColor: 'rgb(54, 162, 235)',
+                backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                tension: 0.4,
+                fill: true
+            }, {
+                label: 'Pronunciation Score',
+                data: [60, 68, 75, 80, 83, 87],
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        };
+
+        new Chart(ctx, {
+            type: 'line',
+            data: progressData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Your Learning Progress'
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Activity Chart
+    function initializeActivityChart() {
+        const ctx = document.getElementById('activityChart').getContext('2d');
+
+        const activityData = {
+            labels: ['Grammar Checks', 'Pronunciation Practice', 'Profile Updates'],
+            datasets: [{
+                data: [{{ user_stats.grammar_checks or 0 }}, {{ user_stats.practice_sessions or 0 }}, 3],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(255, 205, 86, 0.8)'
+                ],
+                borderColor: [
+                    'rgb(54, 162, 235)',
+                    'rgb(255, 99, 132)',
+                    'rgb(255, 205, 86)'
+                ],
+                borderWidth: 2
+            }]
+        };
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: activityData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Activity Distribution'
+                    },
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+
+    // Voice Assistant functionality
+    function initializeVoiceAssistant() {
+        const voiceBtn = document.getElementById('voiceAssistantBtn');
+        if (voiceBtn) {
+            voiceBtn.addEventListener('click', function() {
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                    startVoiceAssistant();
+                } else {
+                    alert('Speech recognition is not supported in your browser. Please use Chrome or Edge.');
+                }
+            });
+        }
+    }
+
+    function startVoiceAssistant() {
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-US';
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        recognition.onstart = function() {
+            document.getElementById('voiceAssistantBtn').innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Listening...';
+            document.getElementById('voiceAssistantBtn').disabled = true;
+        };
+
+        recognition.onresult = function(event) {
+            const command = event.results[0][0].transcript.toLowerCase();
+            handleVoiceCommand(command);
+        };
+
+        recognition.onend = function() {
+            document.getElementById('voiceAssistantBtn').innerHTML = '<i class="fas fa-microphone-alt me-2"></i>Activate Assistant';
+            document.getElementById('voiceAssistantBtn').disabled = false;
+        };
+
+        recognition.onerror = function(event) {
+            console.error('Speech recognition error:', event.error);
+            document.getElementById('voiceAssistantBtn').innerHTML = '<i class="fas fa-microphone-alt me-2"></i>Activate Assistant';
+            document.getElementById('voiceAssistantBtn').disabled = false;
+        };
+
+        recognition.start();
+    }
+
+    function handleVoiceCommand(command) {
+        console.log('Voice command received:', command);
+
+        if (command.includes('grammar') || command.includes('check')) {
+            showNotification('Opening Grammar Checker...', 'info');
+            setTimeout(() => window.location.href = "{{ url_for('grammar') }}", 1000);
+        } else if (command.includes('practice') || command.includes('pronunciation')) {
+            showNotification('Opening Pronunciation Practice...', 'info');
+            setTimeout(() => window.location.href = "{{ url_for('practice') }}", 1000);
+        } else if (command.includes('profile') || command.includes('settings')) {
+            showNotification('Opening Profile...', 'info');
+            setTimeout(() => window.location.href = "{{ url_for('profile') }}", 1000);
+        } else if (command.includes('home') || command.includes('dashboard')) {
+            showNotification('You are already on the dashboard!', 'info');
+        } else {
+            showNotification('Command not recognized. Try saying "grammar", "practice", or "profile".', 'warning');
+        }
+    }
+
+    // Notification function
+    function showNotification(message, type = 'info') {
+        const alertClass = type === 'error' ? 'danger' : type;
+        const alertHtml = `
+            <div class="alert alert-${alertClass} alert-dismissible fade show position-fixed"
+                 style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;" role="alert">
+                <i class="fas fa-${getIconForType(type)} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', alertHtml);
+
+        // Auto-remove after 3 seconds
+        setTimeout(() => {
+            const alert = document.querySelector('.alert:last-of-type');
+            if (alert) {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }
+        }, 3000);
+    }
+
+    function getIconForType(type) {
+        const icons = {
+            'success': 'check-circle',
+            'error': 'exclamation-triangle',
+            'warning': 'exclamation-circle',
+            'info': 'info-circle'
+        };
+        return icons[type] || 'info-circle';
+    }
+</script>
+{% endblock %}
