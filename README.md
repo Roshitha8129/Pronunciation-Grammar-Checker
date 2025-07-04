@@ -2,6 +2,20 @@
 
 An intelligent web-based NLP system that helps users improve their grammar, pronunciation, and fluency through advanced speech recognition and natural language processing.
 
+# Enhanced Pronunciation & Grammar Checker
+
+[![GitHub release](https://img.shields.io/github/v/release/Roshitha8129/Pronunciation-Grammar-Checker?style=flat-square)](https://github.com/Roshitha8129/Pronunciation-Grammar-Checker/releases)
+[![GitHub stars](https://img.shields.io/github/stars/Roshitha8129/Pronunciation-Grammar-Checker?style=flat-square)](https://github.com/Roshitha8129/Pronunciation-Grammar-Checker/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/Roshitha8129/Pronunciation-Grammar-Checker?style=flat-square)](https://github.com/Roshitha8129/Pronunciation-Grammar-Checker/network)
+[![GitHub issues](https://img.shields.io/github/issues/Roshitha8129/Pronunciation-Grammar-Checker?style=flat-square)](https://github.com/Roshitha8129/Pronunciation-Grammar-Checker/issues)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg?style=flat-square)](https://www.python.org/downloads/)
+[![Flask](https://img.shields.io/badge/Flask-2.0+-green.svg?style=flat-square)](https://flask.palletsprojects.com/)
+
+> *A comprehensive web application for pronunciation and grammar improvement*
+
+---
+
 ## 🚀 Features
 
 - **Grammar & Spell Checker**: Real-time text correction using advanced NLP algorithms
